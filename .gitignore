@@ -1,3 +1,4 @@
 ._*
-credentials.json
+*.json
 node_modules/
+*.zip
