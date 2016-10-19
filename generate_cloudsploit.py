@@ -17,29 +17,6 @@ import json
 
 srciprange = "124.47.132.132/32"
 
-def download_file(url, filename):
-    """
-    Download file from url into filename
-    :param url: url to download file from
-    :param filename: local filename to download to
-    """
-    print('Downloading from {0}...'.format(url))
-    with urllib.request.urlopen(url) as response, open(filename, 'wb') as out_file:
-        shutil.copyfileobj(response, out_file)
-
-def upload_to_s3(bucketname, filename):
-    """
-    Upload local file to S3 bucket
-    :param bucketname: bucket to upload to
-    :param filename: local filename to upload
-    """
-    print('Uploading {0} to S3 bucket {1}...'.format(filename, bucketname))
-    s3 = boto3.resource('s3')
-    try:
-        s3.Object(bucketname, filename).put(Body=open(filename, 'rb'))
-    except botocore.exceptions.ClientError as e:
-        logging.warning('Unable upload file to bucket: {0}'.format(e))
-
 def create_bucket(bucketname):
     """
     Create an S3 bucket
@@ -81,6 +58,32 @@ def create_bucket(bucketname):
         )
     except botocore.exceptions.ClientError as e:
         logging.warning('Unable to set website on bucket: {0}'.format(e))
+
+
+def download_file(url, filename):
+    """
+    Download file from url into filename
+    :param url: url to download file from
+    :param filename: local filename to download to
+    """
+    print('Downloading from {0}...'.format(url))
+    with urllib.request.urlopen(url) as response, open(filename, 'wb') as out_file:
+        shutil.copyfileobj(response, out_file)
+
+
+def upload_to_s3(bucketname, filename):
+    """
+    Upload local file to S3 bucket
+    :param bucketname: bucket to upload to
+    :param filename: local filename to upload
+    """
+    print('Uploading {0} to S3 bucket {1}...'.format(filename, bucketname))
+    s3 = boto3.resource('s3')
+    try:
+        s3.Object(bucketname, filename).put(Body=open(filename, 'rb'))
+    except botocore.exceptions.ClientError as e:
+        logging.warning('Unable upload file to bucket: {0}'.format(e))
+
 
 def set_bucket_policy(bucketname):
     """
@@ -397,7 +400,7 @@ def main():
     download_file('https://s3-ap-southeast-2.amazonaws.com/cloudsploit/cloudsploit-scans.zip', 'cloudsploit-scans.zip')
     upload_to_s3(bucketname, 'cloudsploit-report.zip')
     upload_to_s3(bucketname, 'cloudsploit-scans.zip')
-    set_bucket_policy(bucketname)
+    #set_bucket_policy(bucketname) - not currently used; this will prevent lambdas from accessing the bucket
 
     # Add roles to template
     trop_scanner_role = template.add_resource(scanner_role)

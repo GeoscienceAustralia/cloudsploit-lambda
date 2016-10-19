@@ -9,3 +9,4 @@ Cloudsploit Lambda provides an automated way to view security risks in your AWS 
 2. Add your IP address range to generate_cloudsploit.py.
 3. Run `python3 generate_cloudsploit.py`. This will create the S3 bucket, download the Lambda function code zips, and upload them to the newly-created bucket. It will also generate a Cloudformation template.
 4. Run `cloudsploit-cf/stack-create.sh`. This will create a Cloudformation stack that creates the Lambda functions and schedule.
+5. (Optional) Run `./invoke-lambda.sh`. This will manually run the Lambda so that you have a report immediately. Subsequent reports will be generated daily. 
