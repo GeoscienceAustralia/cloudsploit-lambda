@@ -392,7 +392,9 @@ def main():
 
     # Create template
     template_file_path = 'cloudsploit-stack.json'
-    template = Template()
+    template = Template(
+        Description='GA Security Auditing Stack'
+    )
 
     # Create bucket, download and upload files, set bucket policy
     create_bucket(bucketname)
