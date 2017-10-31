@@ -21,7 +21,8 @@ plugins = ['publicS3Origin', 'cloudtrailBucketAccessLogging', 'cloudtrailBucketD
 
 sts = boto3.client("sts")
 account_id = sts.get_caller_identity()["Account"]
-wwwbucket = 'cloudsploitwww' + account_id
+wwwbucket = 'secgadevsga'
+
 
 def retrieve_json():
 
@@ -31,7 +32,7 @@ def retrieve_json():
 
   client = boto3.client('lambda')
   resp = client.invoke(
-      FunctionName='cloudsploitscanner',
+      FunctionName='cloudsploit_scans',
       InvocationType='RequestResponse',
       Payload=json_payload
   )
@@ -40,7 +41,7 @@ def retrieve_json():
   return data
 
 def generate_html(filename, content):
-    filename = filename + '.html'
+    filename = account_id + '/' + filename + '.html'
     s3client = boto3.resource('s3')
 
     bucket = s3client.Bucket(wwwbucket)
@@ -66,8 +67,14 @@ def add_header(title):
 def generate_index(count):
     client = boto3.client('iam')
     response = client.list_account_aliases()
-    account_alias = response['AccountAliases'][0]
+    try:
+      response = client.list_account_aliases()
+      account_alias = response['AccountAliases'][0]
+    except Exception as e:
+      print('No alias for this account, using account ID: ' + e.args[-1])
+      account_alias = account_id
 
+ 
     content = add_header(account_alias)
     category_count = 0
     content += '<div class ="container"><div class="row"><div class="col-sm-6">'
